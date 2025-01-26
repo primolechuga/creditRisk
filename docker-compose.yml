@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  angular-app:
+    build:
+      context: ./Front-end
+      dockerfile: Dockerfile
+    container_name: angular-app
+    ports:
+      - "4000:4000" # Expone el puerto 4200
+    volumes:
+      - ./Front-end:/app
+    depends_on:
+      - django-api
+    networks:
+      - app-network
+
+  django-api:
+    build:
+      context: ./Back-end
+      dockerfile: Dockerfile
+    container_name: django-api
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Back-end:/app
+    networks:
+      - app-network
+    
+networks:
+  app-network:
+

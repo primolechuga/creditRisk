@@ -1,0 +1,134 @@
+:host {
+  background-color: #ffffff;
+}
+
+.content {
+  flex: 1;
+}
+
+.content-div {
+  margin-bottom: 20px;
+}
+
+.content-div:hover {
+  cursor: pointer;
+}
+
+#firstsplit {
+  background: white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  min-width: 23vw;
+  position: relative; /* Necesario para el menú desplegable */
+}
+
+#firstsplit.collapsed {
+  display: none; /* Ocultar el menú cuando está colapsado */
+}
+
+#secondsplit {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y:hidden;
+}
+
+.logo {
+  display: flex;
+  align-self: center;
+  margin-bottom: 25px;
+}
+
+.logo img {
+  height: 45px;
+}
+
+.icon {
+  display: flex;
+  flex-direction: row;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.icon-image {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  width: auto;
+  height: 15px;
+  margin-right: 10px;
+}
+
+p {
+  font-size: 11pt;
+  font-weight: 500;
+  margin-bottom: 0px;
+  align-content: center;
+}
+
+// Responsive
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+  z-index: 999; /* Aseguramos que esté por encima del contenido */
+  pointer-events: all; /* Permite hacer clic en la capa */
+}
+
+.menu-toggle-btn {
+  position: fixed;
+  top: 11px;
+  left: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+
+  border-radius: 50%;
+  padding: 10px;
+  z-index: 1000;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-toggle-btn:hover {
+  background-color: #f3f4f6;
+  transition: 0.2s ease;
+}
+
+@media (max-width: 766px) {
+  #firstsplit {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+
+  #firstsplit.collapsed {
+    transform: translateX(-100%); /* Desplaza el menú fuera de la vista */
+  }
+
+  .logo {
+    height: 30px;
+  }
+
+  #secondsplit {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  /* Mostrar capa oscura cuando el menú está desplegado */
+  .overlay {
+    display: block;
+  }
+}

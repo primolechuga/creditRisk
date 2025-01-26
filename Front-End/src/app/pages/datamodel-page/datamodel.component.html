@@ -1,0 +1,50 @@
+<!-- Página de contenido con Angular Split -->
+<div class="content">
+  <as-split direction="horizontal" [gutterSize]="2" unit="percent">
+    <as-split-area
+      [size]="leftPanelSize"
+      id="firstsplit"
+      [ngClass]="{ collapsed: !showLeftSidenav }"
+    >
+      <div class="logo">
+        <img src="./images/Butterfly.png" alt="" *ngIf="!isMobile" />
+      </div>
+
+      <div id="firstsplitcontent">
+        <app-tree-datamodel *ngIf="activeTab === 'datamodel'"></app-tree-datamodel>
+        <app-tree-chat *ngIf="activeTab === 'chat'"></app-tree-chat>
+        <app-tree-reports *ngIf="activeTab === 'report'"></app-tree-reports>
+      </div>
+    </as-split-area>
+
+    <as-split-area [size]="rightPanelSize" id="secondsplit" [ngSwitch]="menu">
+      <app-header (tabChanged)="onTabChanged($event)"></app-header>
+
+      <ng-container *ngSwitchDefault>
+        <app-data-table *ngIf="dataModelNodes.includes(menu)"></app-data-table>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Chat'">
+        <app-ai-chat></app-ai-chat>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Report'">
+        <app-report-sheet></app-report-sheet>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Nothing'"></ng-container>
+    </as-split-area>
+  </as-split>
+
+  <!-- Fondo oscuro cuando el menú está desplegado -->
+  <div
+    *ngIf="showLeftSidenav && isMobile"
+    class="overlay"
+    (click)="toggleMenu()"
+  ></div>
+
+  <!-- Botón para mostrar el menú izquierdo en pantallas pequeñas (hamburguesa) -->
+  <button *ngIf="isMobile" (click)="toggleMenu()" class="menu-toggle-btn">
+    <i class="pi pi-bars"></i>
+  </button>
+</div>

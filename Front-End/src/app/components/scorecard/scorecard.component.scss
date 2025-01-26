@@ -1,0 +1,43 @@
+.score-card {
+  display: flex;
+  flex-direction: column;
+
+  margin-right: 50px;
+  margin-left: 50px;
+  margin-top: 30px;
+  padding: 20px;
+
+  width: auto;
+
+  background-color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.distribution-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vh;
+}
+
+.risk-score-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+h2 {
+  margin: 0px;
+  font-weight: bold;
+  font-size: 24pt;
+  margin-bottom: 20px;
+}
+
+h3 {
+  margin: 0px;
+  font-weight: bold;
+  font-size: 20pt;
+}
+
+p {
+  font-size: 10pt;
+}

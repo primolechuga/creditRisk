@@ -1,0 +1,51 @@
+<div class="score-card">
+  <h2>Score Card</h2>
+
+  <!-- Primer Div: Distribución Poblacional -->
+  <div class="distribution-container">
+    <h3>Loan Population Distribution</h3>
+    <p>Percentages of failure and success of loaning in our data</p>
+    <p-chart
+      type="pie"
+      [data]="pieChartData"
+      [options]="pieChartOptions"
+    ></p-chart>
+  </div>
+
+  <!-- Segundo Div: Puntaje de Riesgo -->
+  <div class="risk-score-container">
+    <h2>Risk Scores</h2>
+
+    <p>Given your profile data you have the following probabilities</p>
+    <br />
+    <!-- Progress Bars for Paid, Current, Failure -->
+    <div class="progress-bar-section">
+      <h3>Fully Paying The Loan</h3>
+      <p-progressBar [value]="paid" [showValue]="true"></p-progressBar>
+
+      <h3>Paying The Quotes In Time</h3>
+      <p-progressBar [value]="current" [showValue]="true"></p-progressBar>
+
+      <h3>Failure</h3>
+      <p-progressBar [value]="failure" [showValue]="true"></p-progressBar>
+    </div>
+    <br />
+
+    <!-- Score Section -->
+    <div class="score-section">
+      <h2>Score</h2>
+      <h4>{{ score }}</h4>
+      <p>
+        Score Interpretation:<br />
+        300-499: High Risk Profile. Difficulties in obtaining credit or less
+        favorable conditions.<br />
+        500-649: Moderate Risk Profile. Eligible for credit, but with possible
+        restrictions or higher rates.<br />
+        650-799: Low Risk Profile. Good credit history and low risk. High
+        probability of approval with good conditions.<br />
+        800-850: No Risk Profile. Very solid credit history and very low risk
+        level. Very favorable credit conditions.
+      </p>
+    </div>
+  </div>
+</div>

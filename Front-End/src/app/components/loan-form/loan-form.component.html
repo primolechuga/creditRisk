@@ -1,0 +1,533 @@
+<div id="page-root">
+  <div id="header">
+    <h1>Credit Risk Calculator</h1>
+    <p>
+      Use our calculator to assess your credit risk level and discover the state
+      of your financial health.
+    </p>
+  </div>
+
+  <div>
+    <form #loanForm="ngForm" (ngSubmit)="onSubmit(loanForm)" novalidate>
+      <!-- Loan Amount -->
+      <div class="p-field">
+        <label for="loan_amnt">Loan Amount</label>
+        <input
+          pInputText
+          id="loan_amnt"
+          type="number"
+          [(ngModel)]="loanAmnt"
+          name="loan_amnt"
+          required
+          #loanAmntInput="ngModel"
+        />
+        <div
+          *ngIf="loanAmntInput.invalid && loanAmntInput.touched"
+          class="alert-message"
+        >
+          Loan Amount is required.
+        </div>
+        <p *ngIf="loanAmntInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Funded Amount -->
+      <div class="p-field">
+        <label for="funded_amnt">Funded Amount</label>
+        <input
+          pInputText
+          id="funded_amnt"
+          type="number"
+          [(ngModel)]="fundedAmnt"
+          name="funded_amnt"
+          required
+          #fundedAmntInput="ngModel"
+        />
+        <div
+          *ngIf="fundedAmntInput.invalid && fundedAmntInput.touched"
+          class="alert-message"
+        >
+          Funded Amount is required.
+        </div>
+        <p *ngIf="fundedAmntInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Funded Amount Inv -->
+      <div class="p-field">
+        <label for="funded_amnt_inv">Financed Invested Amount</label>
+        <input
+          pInputText
+          id="funded_amnt_inv"
+          type="number"
+          [(ngModel)]="fundedAmntInv"
+          name="funded_amnt_inv"
+          required
+          #fundedAmntInvInput="ngModel"
+        />
+        <div
+          *ngIf="fundedAmntInvInput.invalid && fundedAmntInvInput.touched"
+          class="alert-message"
+        >
+          Financed Invested Amount is required.
+        </div>
+        <p *ngIf="fundedAmntInvInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Term -->
+      <div class="p-field">
+        <label for="term">Term</label>
+        <input
+          pInputText
+          id="term"
+          type="number"
+          [(ngModel)]="term"
+          name="term"
+          required
+          #termInput="ngModel"
+        />
+        <div
+          *ngIf="termInput.invalid && termInput.touched"
+          class="alert-message"
+        >
+          Term is required.
+        </div>
+        <p *ngIf="termInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Interest Rate -->
+      <div class="p-field">
+        <label for="int_rate">Annual Interest Rate (%)</label>
+        <input
+          pInputText
+          id="int_rate"
+          type="number"
+          [(ngModel)]="intRate"
+          name="int_rate"
+          required
+          #intRateInput="ngModel"
+        />
+        <div
+          *ngIf="intRateInput.invalid && intRateInput.touched"
+          class="alert-message"
+        >
+          Annual Interest Rate is required.
+        </div>
+        <p *ngIf="intRateInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Grade (Dropdown) -->
+      <div class="p-field">
+        <label for="grade">Loan Grading</label>
+        <p-dropdown
+          id="grade"
+          [(ngModel)]="grade"
+          name="grade"
+          [options]="gradeOptions"
+          placeholder="Select a grade"
+          required
+          #gradeInput="ngModel"
+        ></p-dropdown>
+        <div
+          *ngIf="gradeInput.invalid && gradeInput.touched"
+          class="alert-message"
+        >
+          Loan Grading is required.
+        </div>
+        <p *ngIf="gradeInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Home Ownership (Dropdown) -->
+      <div class="p-field">
+        <label for="home_ownership">Home Ownership</label>
+        <p-dropdown
+          id="home_ownership"
+          [(ngModel)]="homeOwnership"
+          name="home_ownership"
+          [options]="homeOwnershipOptions"
+          placeholder="Select an option"
+          required
+          #homeOwnershipInput="ngModel"
+        ></p-dropdown>
+        <div
+          *ngIf="homeOwnershipInput.invalid && homeOwnershipInput.touched"
+          class="alert-message"
+        >
+          Home Ownership is required.
+        </div>
+        <p *ngIf="homeOwnershipInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Verification Status (Dropdown) -->
+      <div class="p-field">
+        <label for="verification_status">Verification Status</label>
+        <p-dropdown
+          id="verification_status"
+          [(ngModel)]="verificationStatus"
+          name="verification_status"
+          [options]="verificationStatusOptions"
+          placeholder="Select an option"
+          required
+          #verificationStatusInput="ngModel"
+        ></p-dropdown>
+        <div
+          *ngIf="
+            verificationStatusInput.invalid && verificationStatusInput.touched
+          "
+          class="alert-message"
+        >
+          Verification Status is required.
+        </div>
+        <p *ngIf="verificationStatusInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Payment Plan (Dropdown) -->
+      <div class="p-field">
+        <label for="purpose">Purpose</label>
+        <p-dropdown
+          id="purpose"
+          [(ngModel)]="purpose"
+          name="purpose"
+          [options]="purposeOptions"
+          placeholder="Select an option"
+          required
+          #purposeInput="ngModel"
+        ></p-dropdown>
+        <div
+          *ngIf="purposeInput.invalid && purposeInput.touched"
+          class="alert-message"
+        >
+          purpose is required.
+        </div>
+        <p *ngIf="purposeInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- DTI -->
+      <div class="p-field">
+        <label for="dti">Debt-to-Income Ratio (DTI)</label>
+        <input
+          pInputText
+          id="dti"
+          type="number"
+          [(ngModel)]="dti"
+          name="dti"
+          required
+          #dtiInput="ngModel"
+        />
+        <div *ngIf="dtiInput.invalid && dtiInput.touched" class="alert-message">
+          Debt-to-Income Ratio is required.
+        </div>
+        <p *ngIf="dtiInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Inquiries in last 6 months -->
+      <div class="p-field">
+        <label for="inq_last_6mths">Inquiries in Last 6 Months</label>
+        <input
+          pInputText
+          id="inq_last_6mths"
+          type="number"
+          [(ngModel)]="inqLast6mths"
+          name="inq_last_6mths"
+          required
+          #inqLast6mthsInput="ngModel"
+        />
+        <div
+          *ngIf="inqLast6mthsInput.invalid && inqLast6mthsInput.touched"
+          class="alert-message"
+        >
+          Inquiries in the last 6 months are required.
+        </div>
+        <p *ngIf="inqLast6mthsInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Open Accounts -->
+      <div class="p-field">
+        <label for="open_acc">Open Accounts</label>
+        <input
+          pInputText
+          id="open_acc"
+          type="number"
+          [(ngModel)]="openAcc"
+          name="open_acc"
+          required
+          #openAccInput="ngModel"
+        />
+        <div
+          *ngIf="openAccInput.invalid && openAccInput.touched"
+          class="alert-message"
+        >
+          Open Accounts are required.
+        </div>
+        <p *ngIf="openAccInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Revolving Utilization -->
+      <div class="p-field">
+        <label for="revol_util">Revolving Utilization</label>
+        <input
+          pInputText
+          id="revol_util"
+          type="number"
+          [(ngModel)]="revolUtil"
+          name="revol_util"
+          required
+          #revolUtilInput="ngModel"
+        />
+        <div
+          *ngIf="revolUtilInput.invalid && revolUtilInput.touched"
+          class="alert-message"
+        >
+          Revolving Utilization is required.
+        </div>
+        <p *ngIf="revolUtilInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Out Principal -->
+      <div class="p-field">
+        <label for="out_prncp">Outstanding Principal</label>
+        <input
+          pInputText
+          id="out_prncp"
+          type="number"
+          [(ngModel)]="outPrncp"
+          name="out_prncp"
+          required
+          #outPrncpInput="ngModel"
+        />
+        <div
+          *ngIf="outPrncpInput.invalid && outPrncpInput.touched"
+          class="alert-message"
+        >
+          Outstanding Principal is required.
+        </div>
+        <p *ngIf="outPrncpInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Total Payment -->
+      <div class="p-field">
+        <label for="total_pymnt">Total Payment</label>
+        <input
+          pInputText
+          id="total_pymnt"
+          type="number"
+          [(ngModel)]="totalPymnt"
+          name="total_pymnt"
+          required
+          #totalPymntInput="ngModel"
+        />
+        <div
+          *ngIf="totalPymntInput.invalid && totalPymntInput.touched"
+          class="alert-message"
+        >
+          Total Payment is required.
+        </div>
+        <p *ngIf="totalPymntInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Total Received Interest -->
+      <div class="p-field">
+        <label for="total_rec_int">Total Received Interest</label>
+        <input
+          pInputText
+          id="total_rec_int"
+          type="number"
+          [(ngModel)]="totalRecInt"
+          name="total_rec_int"
+          required
+          #totalRecIntInput="ngModel"
+        />
+        <div
+          *ngIf="totalRecIntInput.invalid && totalRecIntInput.touched"
+          class="alert-message"
+        >
+          Total Received Interest is required.
+        </div>
+        <p *ngIf="totalRecIntInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Last Payment Amount -->
+      <div class="p-field">
+        <label for="last_pymnt_amnt">Last Payment Amount</label>
+        <input
+          pInputText
+          id="last_pymnt_amnt"
+          type="number"
+          [(ngModel)]="lastPymntAmnt"
+          name="last_pymnt_amnt"
+          required
+          #lastPymntAmntInput="ngModel"
+        />
+        <div
+          *ngIf="lastPymntAmntInput.invalid && lastPymntAmntInput.touched"
+          class="alert-message"
+        >
+          Last Payment Amount is required.
+        </div>
+        <p *ngIf="lastPymntAmntInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Total Curv Bal -->
+      <div class="p-field">
+        <label for="total_rec_int">Tot Cur Bal</label>
+        <input
+          pInputText
+          id="total_cur_bal"
+          type="number"
+          [(ngModel)]="totCurBal"
+          name="total_cur_bal"
+          required
+          #totCurBalInput="ngModel"
+        />
+        <div
+          *ngIf="totCurBalInput.invalid && totCurBalInput.touched"
+          class="alert-message"
+        >
+          Tot Cur Bal is required.
+        </div>
+        <p *ngIf="totCurBalInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Total Revolving High Limit -->
+      <div class="p-field">
+        <label for="total_rev_hi_lim">Total Revolving High Limit</label>
+        <input
+          pInputText
+          id="total_rev_hi_lim"
+          type="number"
+          [(ngModel)]="totalRevHiLim"
+          name="total_rev_hi_lim"
+          required
+          #totalRevHiLimInput="ngModel"
+        />
+        <div
+          *ngIf="totalRevHiLimInput.invalid && totalRevHiLimInput.touched"
+          class="alert-message"
+        >
+          Total Revolving High Limit is required.
+        </div>
+        <p *ngIf="totalRevHiLimInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Months Since Issue Date -->
+      <div class="p-field">
+        <label for="mths_since_issue_d">Issue Date Of The Loan</label>
+        <p-calendar
+          id="mths_since_issue_d"
+          [(ngModel)]="mthsSinceIssueD"
+          name="mths_since_issue_d"
+          dateFormat="yy-mm-dd"
+          required
+          #mthsSinceIssueDInput="ngModel"
+        ></p-calendar>
+        <div
+          *ngIf="mthsSinceIssueDInput.invalid && mthsSinceIssueDInput.touched"
+          class="alert-message"
+        >
+          Issue Date of the Loan is required.
+        </div>
+        <p *ngIf="mthsSinceIssueDInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Months Since Last Payment Date -->
+      <div class="p-field">
+        <label for="mths_since_last_pymnt_d">Last Payment Date</label>
+        <p-calendar
+          id="mths_since_last_pymnt_d"
+          [(ngModel)]="mthsSinceLastPymntD"
+          name="mths_since_last_pymnt_d"
+          dateFormat="yy-mm-dd"
+          required
+          #mthsSinceLastPymntDInput="ngModel"
+        ></p-calendar>
+        <div
+          *ngIf="
+            mthsSinceLastPymntDInput.invalid && mthsSinceLastPymntDInput.touched
+          "
+          class="alert-message"
+        >
+          Last Payment Date is required.
+        </div>
+        <p *ngIf="mthsSinceLastPymntDInput.pristine" class="required-field">
+          Field is required.
+        </p>
+      </div>
+
+      <!-- Months Since Last Credit Pull Date -->
+      <div class="p-field">
+        <label for="mths_since_last_credit_pull_d">Last Credit Pull</label>
+        <p-calendar
+          id="mths_since_last_credit_pull_d"
+          [(ngModel)]="mthsSinceLastCreditPullD"
+          name="mths_since_last_credit_pull_d"
+          dateFormat="yy-mm-dd"
+          required
+          #mthsSinceLastCreditPullDInput="ngModel"
+        ></p-calendar>
+        <div
+          *ngIf="
+            mthsSinceLastCreditPullDInput.invalid &&
+            mthsSinceLastCreditPullDInput.touched
+          "
+          class="alert-message"
+        >
+          Last Credit Pull Date is required.
+        </div>
+        <p
+          *ngIf="mthsSinceLastCreditPullDInput.pristine"
+          class="required-field"
+        >
+          Field is required.
+        </p>
+      </div>
+
+      <p-button
+        label="Submit"
+        type="submit"
+        [disabled]="!loanForm.valid"
+      ></p-button>
+    </form>
+  </div>
+
+  <div>
+    <app-score-card></app-score-card>
+  </div>
+</div>
