@@ -1,108 +1,96 @@
 from datetime import datetime
 import json
 import numpy as np
-from sklearn.discriminant_analysis import StandardScaler
+import pandas as pd
+import joblib
+import tensorflow as tf
 from dateutil.relativedelta import relativedelta
-from tensorflow.keras.models import load_model
+from sklearn.preprocessing import StandardScaler
 
 class LoanService:
-
     def __init__(self):
+        # Cargar el modelo y el escalador
+        self.model = tf.keras.models.load_model('app\services\model.keras')
+        self.scaler = joblib.load('app\services\scaler.pkl')
         
-        # Parámetros del modelo
-        self.model = load_model('app/services/modelo.h5')
-        self.grade_classes = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6}
-        self.verification_status_classes = {'Not Verified': 0, 'Source Verified': 1, 'Verified': 2}
-        self.home_ownership_classes = {'ANY': 0, 'MORTAGE': 1, 'NONE': 2, 'OTHER': 3, 'OWN': 4, 'RENT': 5}
-        self.purpose_classes = {'car': 0, 'credit_card': 1, 'debt_consolidation': 2, 'educational': 3, 'home_improvement': 4, 'house': 5, 'major_purchase': 6, 'medical': 7, 'moving': 8, 'other': 9, 'renewable_energy': 10, 'small_business': 11, 'vacation': 12, 'wedding': 13}
-        self.scaler = StandardScaler()
-        self.weights = {"Pagado": 3, "En proceso": 2, "Incumplido": -3}  # Pesos por clase
+        # Pesos para cada clase
+        self.weights = {
+            "Incumplidos": -2,
+            "Activos": 2,
+            "Pagados": 3,
+            "Morosos": -1,
+            "Emitidos": 1
+        }
+        
+        # Parámetros del scorecard
+        self.OFFSET = 600  # Ajusta la escala base del puntaje
+        self.FACTOR = 10  # Ajusta el peso del impacto del logaritmo
+        
+        # Definir clases del modelo
+        self.class_names = ["Incumplidos", "Activos", "Pagados", "Morosos", "Emitidos"]
     
-
-    def preprocess_data(self, data):
+    def validate_and_convert_data(self, data):
+        """
+        Verifica y convierte los tipos de datos en el diccionario de entrada.
+        """
+        df = pd.DataFrame([data])
         
-        # Convertir variables categóricas a numéricas
-        data["grade"] = self.grade_classes[data["grade"]]
-        data["verification_status"] = self.verification_status_classes[data["verification_status"]]
-        data["home_ownership"] = self.home_ownership_classes[data["home_ownership"]]
-        data["purpose"] = self.purpose_classes[data["purpose"]]
-
-        ref_date = datetime(2025, 1, 21)
-
-        def preprocess_date(fecha_inicio, fecha_fin):
-            diferencia = relativedelta(fecha_fin, fecha_inicio)
-            return diferencia.years * 12 + diferencia.months
-
-        # Convertir las fechas en el diccionario de datos
-        data["mths_since_issue_d"] = preprocess_date(datetime.strptime(data["mths_since_issue_d"], "%Y-%m-%dT%H:%M:%S.%fZ"), ref_date)
-        data["mths_since_last_pymnt_d"] = preprocess_date(datetime.strptime(data["mths_since_last_pymnt_d"], "%Y-%m-%dT%H:%M:%S.%fZ"), ref_date)
-        data["mths_since_last_credit_pull_d"] = preprocess_date(datetime.strptime(data["mths_since_last_credit_pull_d"], "%Y-%m-%dT%H:%M:%S.%fZ"), ref_date)
+        # Definir los tipos correctos de datos
+        correct_types = {
+            'out_prncp': 'float', 'out_prncp_inv': 'float', 'last_pymnt_amnt': 'float',
+            'total_rec_prncp': 'float', 'total_pymnt': 'float', 'total_pymnt_inv': 'float',
+            'recoveries': 'float', 'collection_recovery_fee': 'float', 'funded_amnt': 'float',
+            'total_rec_int': 'float', 'funded_amnt_inv': 'float', 'loan_amnt': 'float',
+            'installment': 'float', 'total_rev_hi_lim': 'float', 'tot_cur_bal': 'float',
+            'initial_list_status_w': 'int', 'int_rate': 'float', 'dti': 'float',
+            'revol_bal': 'float', 'revol_util': 'float'
+        }
         
-
-        #Crear un arreglo de numpy con los datos
-        data = np.array(list(data.values())).reshape(1, -1)
-
-        #Escalado de los datos
-        feature_array = self.scaler.fit_transform(data)
-
-        return feature_array
+        for column, correct_type in correct_types.items():
+            if column in df.columns:
+                df[column] = df[column].astype(correct_type)
+        
+        return df
     
-
     def calculate_probabilities(self, data):
-        # Calcular probabilidades de predicción
+        """
+        Calcula las probabilidades predichas por el modelo para cada clase.
+        """
         probabilities = self.model.predict(data)
-        
-        # Definir nombres de clases
-        class_names = ["Pagado", "En proceso", "Incumplido"]
-        
-        # Extraer probabilidades por clase
-        class_probabilities = {class_name: prob for class_name, prob in zip(class_names, probabilities[0])}
-
-        return class_probabilities
+        return {class_name: prob for class_name, prob in zip(self.class_names, probabilities[0])}
     
-    
-    # Función para calcular el puntaje basado en probabilidades
-    
-    def calculate_score(self, probabilities, offset=600, factor=50):
-        
-        # Asegurar que las probabilidades sumen 1
+    def calculate_score(self, probabilities):
+        """
+        Calcula un puntaje general a partir de las probabilidades y los pesos.
+        """
         total_prob = sum(probabilities.values())
         normalized_probs = {k: v / total_prob for k, v in probabilities.items()}
         
-        # Score general combinando las clases con sus pesos
-        score = offset
+        score = self.OFFSET
         for class_name, prob in normalized_probs.items():
-            weight = self.weights.get(class_name, 0)  # Default weight is 0 if not defined
-            score += weight * factor * np.log(prob + 1e-6)  # Evitar log(0) con un epsilon
+            weight = self.weights.get(class_name, 0)
+            score += weight * self.FACTOR * np.log(prob + 1e-6)
         
-        return round(score, 0)
+        return round(score, 2)
     
+    def normalize_score(self, score, min_score=300, max_score=850):
+        """
+        Normaliza el puntaje al rango deseado (300-850).
+        """
+        current_min, current_max = 200, 1000
+        normalized_score = min_score + (score - current_min) * (max_score - min_score) / (current_max - current_min)
+        return round(max(min(normalized_score, max_score), min_score), 2)
     
     def get_score(self, json_data):
-        
-        # Preprocesar los datos
-        data = self.preprocess_data(json_data)
-        
-        # Calcular probabilidades de predicción
+        """
+        Preprocesa los datos, calcula las probabilidades y obtiene el puntaje final.
+        """
+        df = self.validate_and_convert_data(json_data)
+        data = self.scaler.transform(df)
         probabilities = self.calculate_probabilities(data)
+        raw_score = self.calculate_score(probabilities)
+        final_score = self.normalize_score(raw_score)
         
-        # Calcular el puntaje
-        score = self.calculate_score(probabilities)
+        result = {"score": float(final_score), **{k: round(float(v), 3) for k, v in probabilities.items()}}
         
-
-        result = {
-            "pagado": round(float(probabilities["Pagado"]), 1),
-            "en_proceso": round(float(probabilities["En proceso"]), 1),
-            "incumplido": round(float(probabilities["Incumplido"]), 1),
-            "score": round(float(score), 1)
-        }
-
         return json.dumps(result)
-    
-
-
-
-
-
-
-    
