@@ -10,8 +10,8 @@ from sklearn.preprocessing import StandardScaler
 class LoanService:
     def __init__(self):
         # Cargar el modelo y el escalador
-        self.model = tf.keras.models.load_model('app\services\model.keras')
-        self.scaler = joblib.load('app\services\scaler.pkl')
+        self.model = tf.keras.models.load_model('app/services/model.keras')
+        self.scaler = joblib.load('app/services/scaler.pkl')
         
         # Pesos para cada clase
         self.weights = {
