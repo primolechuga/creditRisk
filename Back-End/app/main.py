@@ -26,6 +26,7 @@ class App:
 app_instance = App()
 app = app_instance.get_app()
 
+CORS.add(app,allowed_origins=["https://creditriskfront.onrender.com"])
 # Ejecución del servidor
 if __name__ == "__main__":
     # Obtén el puerto desde la variable de entorno o usa 8000 por defecto
