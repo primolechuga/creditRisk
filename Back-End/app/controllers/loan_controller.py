@@ -21,7 +21,7 @@ class LoanController:
         data = await request.json()
         print(data)
 
-        ret_data = self.loan_service.get_score(data)
+        ret_data = self.loan_service.predict(data)
         print(ret_data)
         return ret_data
 
